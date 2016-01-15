@@ -1,20 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_ls.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qle-guen <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/01/15 03:38:13 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/01/15 03:52:05 by qle-guen         ###   ########.fr       */
+/*   Created: 2016/01/15 03:45:41 by qle-guen          #+#    #+#             */
+/*   Updated: 2016/01/15 03:55:05 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <ft_ls.h>
+#ifndef FT_LS_H
+# define FT_LS_H
 
-int		main(int argc, char **argv)
+typedef struct		s_ls_ops
 {
-	(void)argc;
-	(void)argv;
-	return (1);
-}
+	unsigned int	long_format		: 1;
+	unsigned int	recursive		: 1;
+	unsigned int	include_dot		: 1;
+	unsigned int	reverse_order	: 1;
+	unsigned int	sortby_time		: 1;
+}					t_ls_ops;
+
+#endif
