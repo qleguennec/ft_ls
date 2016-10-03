@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_ls.h                                            :+:      :+:    :+:   */
+/*   ls_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qle-guen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/01/15 03:45:41 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/01/15 03:55:05 by qle-guen         ###   ########.fr       */
+/*   Created: 2016/10/03 14:57:38 by qle-guen          #+#    #+#             */
+/*   Updated: 2016/10/03 15:22:28 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_LS_H
-# define FT_LS_H
+#include "libprintf/libprintf.h"
+#include <stdlib.h>
+#include <stdarg.h>
 
-typedef struct		s_ls_ops
+void		ls_exit(const char *format, ...)
 {
-	unsigned int	long_format		: 1;
-	unsigned int	recursive		: 1;
-	unsigned int	include_dot		: 1;
-	unsigned int	reverse_order	: 1;
-	unsigned int	sortby_time		: 1;
-}					t_ls_ops;
+	va_list	ap;
 
-#endif
+	va_start(ap, format);
+	ft_vdprintf(2, format, ap);
+	ft_printf("\n");
+	exit(1);
+}

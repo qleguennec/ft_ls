@@ -1,49 +1,64 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2015/09/25 17:44:49 by qle-guen          #+#    #+#              #
-#*   Updated: 2015/12/30 11:30:08 by qle-guen         ###   ########.fr       *#
-#                                                                              #
-# **************************************************************************** #
-
 # Directories
-BINDIR	=	.
-SRCDIR	=	src
-OBJDIR	=	build
-INCLUDE	=	include
-NAME	=	ft_ls
+PROJECT		=	ft_ls
+BINDIR		?=	.
+BUILDDIR	?=	build
+NAME		=	$(BINDIR)/ft_ls
 
 # Compiler options
-CC		=	clang
-CFLAGS	=	-I$(INCLUDE) -Wall -Wextra -Werror -g
+CC			=	clang
+CFLAGS		=	$(addprefix -I,$(INCLUDE)) -Wall -Wextra -Werror -g
 
+# Color output
+BLACK		=	"\033[0;30m"
+RED			=	"\033[0;31m"
+GREEN		=	"\033[0;32m"
+YELLOW		=	"\033[1;33m"
+BLUE		=	"\033[0;34m"
+MAGENTA		=	"\033[0;35m"
+CYAN		=	"\033[0;36m"
+WHITE		=	"\033[0;37m"
+END			=	"\033[0m"
 
-# Source files
+SRC += ls_exit.c
 SRC += main.c
 
-OBJECTS=$(addprefix $(OBJDIR)/, $(subst .c,.o,$(SRC)))
+LIB += libprintf.a
+LIB += libvect.a
+LIB += libft.a
+
+OBJECTS		=	$(addprefix $(BUILDDIR)/, $(SRC:%.c=%.o))
+LIBRARIES	=	$(addprefix $(BUILDDIR)/, $(LIB)) $(MLX)
+LIBLINK		+=	$(addprefix -l, $(LIB:lib%.a=%))
 
 all: $(NAME)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@$(CC) $(CFLAGS) -c $< -o $@
+$(MLX): $(MLXDIR)
+	@printf $(BLUE)$(PROJECT)$(END)'\t'
+	make -C $(MLXDIR)
 
-$(NAME): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJECTS)
+$(BUILDDIR)/%.a: %
+	@printf $(BLUE)$(PROJECT)$(END)'\t'
+	BINDIR=$(CURDIR)/$(BUILDDIR) BUILDDIR=$(CURDIR)/$(BUILDDIR) \
+		   make --no-print-directory -C $<
+
+$(BUILDDIR)/%.o: %.c
+	@[ -d $(BUILDDIR) ] || mkdir $(BUILDDIR)
+	@printf $(BLUE)$(PROJECT)$(END)'\t'
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(NAME): $(OBJECTS) $(LIBRARIES)
+	@printf $(BLUE)$(PROJECT)$(END)'\t'
+	@$(CC) $(CFLAGS) -L$(BUILDDIR) $(LIBLINK) $(OBJECTS) $(LIBLINK) -o $(NAME)
+	@echo "OK\t"$(NAME)
+
+.PHONY: clean fclean re
 
 clean:
-	@rm -f $(OBJECTS)
+	@printf $(BLUE)$(PROJECT)$(END)'\t'
+	rm -rf $(BUILDDIR)
 
 fclean: clean
-	@rm -f $(NAME)
+	@printf $(BLUE)$(PROJECT)$(END)'\t'
+	rm -rf $(NAME)
 
-.PHONY: re
 re: fclean all
-
-.PHONY: test
-test:
-	@make -C test/
