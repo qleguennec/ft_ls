@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:32:06 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/03 15:46:14 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/03 20:47:10 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "libprintf/libprintf.h"
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 
 static unsigned long	get_opt(char *arg)
 {
@@ -34,63 +35,70 @@ static unsigned long	get_opt(char *arg)
 		else if (*arg == 't')
 			ret |= T;
 		else
-			ls_exit("ls: illegal option -- %c\n%s", *arg, usage);
+			ls_exit("illegal option -- %c\n%s", *arg, g_usage);
 		arg++;
 	}
 	return (ret);
 }
 
-static void				get_filename(t_f_lst ***fl, char *arg)
+static void				sort_args(char **t, int n)
 {
-	**fl = ft_memalloc(sizeof(***fl));
-	if (!**fl)
-		ls_exit("malloc of size %lu failed", sizeof(***fl));
-	while (*arg)
+	int		i;
+	int		j;
+	char	*p;
+	char	*tmp;
+
+	if (n < 2)
+		return ;
+	p = t[n / 2];
+	i = 0;
+	j = n - 1;
+	while (42)
 	{
-		(**fl)->fn[(**fl)->fnlen++] = *arg++;
-		if ((**fl)->fnlen == sizeof((**fl)->fn) - 1)
-			ls_exit("arg too long");
+		while (ft_strcmp(t[i], p) < 0)
+			i++;
+		while (ft_strcmp(p, t[j]) < 0)
+			j--;
+		if (i >= j)
+			break ;
+		tmp = t[i];
+		t[i] = t[j];
+		t[j--] = tmp;
+		i++;
 	}
-	*fl = &(**fl)->next;
+	sort_args(t, i);
+	sort_args(t + i, n - i);
 }
 
-static void				test_args(t_f_lst *fl, t_opts opts)
+static t_f_lst			*build_fl(char **t)
 {
-	if (OPT(L))
-		ft_printf("l option\n");
-	if (OPT(UR))
-		ft_printf("R option\n");
-	if (OPT(A))
-		ft_printf("a option\n");
-	if (OPT(R))
-		ft_printf("r option\n");
-	if (OPT(T))
-		ft_printf("t option\n");
-	while (fl)
-	{
-		ft_printf("%s\n", fl->fn);
-		fl = fl->next;
-	}
+	t_f_lst		*fl;
+	int			ret;
+
+	if (!*t)
+		return (NULL);
+	fl = malloc(sizeof(*fl));
+	if (!fl)
+		ls_exit("malloc: failed to allocate %lu bytes", sizeof(*fl));
+	ret = stat(*t, &fl->stat);
+	if (ret == -1)
+		ft_dprintf(2, "ls: cannot access '%s': %s\n", *t, strerror(errno));
+	fl->fn = *t;
+	fl->next = build_fl(t + 1);
+	return (fl);
 }
 
 int						main(int argc, char **argv)
 {
 	int		i;
 	t_opts	opts;
-	t_f_lst	*flstart;
-	t_f_lst	**fl;
+	t_f_lst	*fl;
 
 	i = 1;
 	opts = 0;
-	flstart = NULL;
-	fl = &flstart;
-	while (i < argc)
-	{
-		if (!flstart && argv[i][0] == '-')
-			opts |= get_opt(&argv[i][1]);
-		else
-			get_filename(&fl, argv[i]);
-		i++;
-	}
-	test_args(flstart, opts);
+	while (i < argc && argv[i][0] == '-')
+		opts |= get_opt(&argv[i++][1]);
+	argv += i;
+	sort_args(argv, argc - i);
+	fl = build_fl(argv);
 }

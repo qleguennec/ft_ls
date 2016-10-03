@@ -1,26 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ls_exit.c                                          :+:      :+:    :+:   */
+/*   ft_ls.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/10/03 14:57:38 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/03 19:48:26 by qle-guen         ###   ########.fr       */
+/*   Created: 2016/10/03 19:12:28 by qle-guen          #+#    #+#             */
+/*   Updated: 2016/10/03 20:03:21 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ls.h"
 #include "libprintf/libprintf.h"
-#include <stdlib.h>
-#include <stdarg.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/stat.h>
 
-void		ls_exit(const char *format, ...)
+int				ft_ls(char *fn, t_opts opts)
 {
-	va_list	ap;
+	int			ret;
+	t_stat		st;
 
-	va_start(ap, format);
-	ft_dprintf(2, "ls: ");
-	ft_vdprintf(2, format, ap);
-	ft_dprintf(2, "\n");
-	exit(1);
+	ret = stat(fn, &st);
+	(void)opts;
+	if (ret == -1)
+		ft_dprintf(2, "ls: cannot access '%s': %s\n", fn, strerror(errno));
+	return (0);
 }

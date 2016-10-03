@@ -19,6 +19,7 @@ CYAN		=	"\033[0;36m"
 WHITE		=	"\033[0;37m"
 END			=	"\033[0m"
 
+SRC += ft_ls.c
 SRC += ls_exit.c
 SRC += main.c
 
@@ -55,10 +56,11 @@ $(NAME): $(OBJECTS) $(LIBRARIES)
 
 clean:
 	@printf $(BLUE)$(PROJECT)$(END)'\t'
-	rm -rf $(BUILDDIR)
+	rm -rf $(OBJECTS)
 
 fclean: clean
 	@printf $(BLUE)$(PROJECT)$(END)'\t'
+	rm -rf $(BUILDDIR)
 	rm -rf $(NAME)
 
 re: fclean all
