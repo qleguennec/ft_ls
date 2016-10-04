@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:32:06 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/05 00:24:53 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/05 01:27:58 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ int						main(int argc, char **argv)
 	argv += i;
 	argc -= i;
 	i = 0;
-	sort_quicksort(argv, (size_t)argc, &sort_lex);
+	sort_quicksort((void **)argv, (size_t)argc, &sort_lex);
 	ls_mask(argv, (size_t)argc);
 	g_m_buf_flush();
 	return (0);

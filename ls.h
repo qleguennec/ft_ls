@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:27:00 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/05 00:22:09 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/05 01:40:54 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # define MALLOC_ERR(x)			ls_exit(g_malloc_err, x)
 # define MALLOC_HANDLE(p, x)	if (!(p = malloc(x))) MALLOC_ERR(x)
 # define WARN(w, x)				(void)ft_dprintf(2, w, x, strerror(errno))
+# define CMP(cmp, a, b)			((g_flags['r']) ? cmp(b, a) : cmp(a, b))
 
 typedef unsigned long			t_opts;
 typedef struct stat				t_stat;
@@ -38,6 +39,6 @@ int								sort_lex(void *a, void *b);
 void							ft_ls(char *fn);
 void							ls_exit(const char *format, ...);
 void							g_m_buf_flush(void);
-void							sort_quicksort(void *t, int n, int (*cmp)(void *, void *));
+void							sort_quicksort(void **t, size_t n, int (*cmp)(void *, void *));
 
 #endif

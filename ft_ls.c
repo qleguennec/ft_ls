@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 19:12:28 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/05 00:28:18 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/05 01:25:24 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void			ft_ls(char *fn)
 		return ;
 	MALLOC_HANDLE(dir_ents, sizeof(char *) * n_ents);
 	get_dir_contents(fn, dir_ents, n_ents);
-	sort_quicksort(dir_ents, n_ents, &sort_lex);
+	sort_quicksort((void **)dir_ents, n_ents, &sort_lex);
 	i = 0;
 	if (fmt(dir_ents, n_ents) && g_flags['R'])
 	{

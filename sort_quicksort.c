@@ -6,10 +6,11 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 23:16:41 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/04 00:13:35 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/05 01:44:54 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ls.h"
 #include <stdlib.h>
 
 void				sort_quicksort
@@ -27,9 +28,9 @@ void				sort_quicksort
 	j = n - 1;
 	while (42)
 	{
-		while (cmp(t[i], p) < 0)
+		while (CMP(cmp, p, t[i]) > 0)
 			i++;
-		while (cmp(p, t[j]) < 0)
+		while (CMP(cmp, t[j], p) > 0)
 			j--;
 		if (i >= j)
 			break ;
