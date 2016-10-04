@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:32:06 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/04 05:44:51 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/05 00:24:53 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,91 +20,70 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-static t_opts			get_opt(char *arg)
+static void				get_flags(char *arg)
 {
-	t_opts		ret;
+	size_t		i;
 
-	ret = 0;
+	i = 0;
 	while (*arg)
 	{
-		if (*arg == 'l')
-			ret |= O_L;
-		else if (*arg == 'R')
-			ret |= O_UR;
-		else if (*arg == 'a')
-			ret |= O_A;
-		else if (*arg == 'r')
-			ret |= O_R;
-		else if (*arg == 't')
-			ret |= O_T;
-		else
+		while (i < LEN(g_impl_flags) && *arg != g_impl_flags[i])
+			i++;
+		if (i == LEN(g_impl_flags))
 			ls_exit("illegal option -- %c\n%s", *arg, g_usage);
+		g_flags[(int)*arg] = 1;
 		arg++;
 	}
-	return (ret);
 }
 
-static t_f_lst			*build_fl(char **t, t_vect *m_buf, size_t *lsize)
+static void				ls_mask
+	(char **argv, size_t argsize)
 {
-	t_f_lst		*fl;
+	int			ret;
+	size_t		i;
 	t_stat		st;
 
-	if (!*t)
-		return (NULL);
-	if (stat(*t, &st) == -1)
-		ft_dprintf(2, g_stat_warn, *t, strerror(errno));
-	if (!(st.st_mode & S_IFDIR))
+	i = 0;
+	while (i < argsize)
 	{
-		vect_fmt(m_buf, "%s\n", *t);
-		(*lsize)++;
-		return (build_fl(t + 1, m_buf, lsize));
+		if ((ret = stat(argv[i], &st)) == -1)
+			WARN(g_access_warn, argv[i]);
+		if (st.st_mode & S_IFDIR)
+		{
+			if (g_flags['R'])
+				vect_fmt(&g_m_buf, "%s:\n", argv[i]);
+			else if (argsize > 1)
+				vect_fmt(&g_m_buf, "%s:\n", argv[i]);
+			ft_ls(argv[i]);
+		}
+		else
+			vect_fmt(&g_m_buf, "%s\n", argv[i]);
+		if (g_m_buf.used >= BUFSIZ)
+			g_m_buf_flush();
+		i++;
 	}
-	fl = malloc(sizeof(*fl));
-	if (!fl)
-		ls_exit(g_malloc_err, sizeof(*fl));
-	fl->stat = st;
-	fl->fn = *t;
-	(*lsize)++;
-	fl->next = build_fl(t + 1, m_buf, lsize);
-	return (fl);
-}
-
-static int				ls_mask
-	(t_f_lst *fl, t_opts opts, size_t lsize, t_vect *m_buf)
-{
-	if (!fl)
-		return (1);
-	if (lsize > 1 || OPT(O_R))
-		vect_fmt(m_buf, "%s:\n", fl->fn);
-	if (fl->stat.st_mode & S_IFDIR)
-		ft_ls(fl->fn, opts, m_buf);
-	if (m_buf->used >= BUFSIZ)
-		m_buf_flush(m_buf);
-	return (ls_mask(fl->next, opts, lsize, m_buf));
 }
 
 int						main(int argc, char **argv)
 {
 	int		i;
-	t_opts	opts;
-	t_f_lst	*fl;
-	t_vect	m_buf;
-	size_t	lsize;
 
 	i = 1;
-	opts = 0;
-	lsize = 0;
+	ft_bzero(&g_m_buf, sizeof(g_m_buf));
+	ft_bzero(&g_flags, LEN(g_flags));
 	while (i < argc && argv[i][0] == '-')
-		opts |= get_opt(&argv[i++][1]);
-	ft_bzero(&m_buf, sizeof(m_buf));
+		get_flags(&argv[i++][1]);
 	if (i == argc)
 	{
-		ft_ls(".", opts, &m_buf);
-		return (m_buf_flush(&m_buf));
+		ft_ls(".");
+		g_m_buf_flush();
+		return (0);
 	}
 	argv += i;
-	sort_quicksort(argv, (size_t)(argc - i), &sort_lex);
-	fl = build_fl(argv, &m_buf, &lsize);
-	return (ls_mask(fl, opts, lsize, &m_buf)
-		&& m_buf_flush(&m_buf));
+	argc -= i;
+	i = 0;
+	sort_quicksort(argv, (size_t)argc, &sort_lex);
+	ls_mask(argv, (size_t)argc);
+	g_m_buf_flush();
+	return (0);
 }

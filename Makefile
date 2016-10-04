@@ -22,7 +22,7 @@ END			=	"\033[0m"
 SRC += ft_ls.c
 SRC += ls_exit.c
 SRC += main.c
-SRC += m_buf_flush.c
+SRC += g_m_buf_flush.c
 SRC += sort_lex.c
 SRC += sort_quicksort.c
 
