@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:27:00 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/06 22:55:52 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/07 01:15:25 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # include "libvect/libvect.h"
 # include <stdlib.h>
 # include <sys/stat.h>
+# include <sys/types.h>
+# include <limits.h>
 
 # define USR_GRP_MAX_LEN		32
 # define SIXMONTHS				((365 / 2) * 86400)
@@ -23,6 +25,7 @@
 # define MALLOC_ERR(x)			ls_exit(g_malloc_err, x)
 # define MALLOC(p, x)			if (!(p = malloc(x))) MALLOC_ERR(x)
 # define MALLOC_SIZEOF(p)		MALLOC(p, sizeof(*p))
+# define STR_SIZE(t)			3 * sizeof(t) + 1
 # define WARN(w, x)				(void)ft_dprintf(2, w, x, strerror(errno))
 # define CMP(cmp, a, b)			((g_flags['r']) ? cmp(b, a) : cmp(a, b))
 # define MODE(c, l)				((ent->st.st_mode & c) ? l : '-')
@@ -32,8 +35,16 @@
 # define BUF_SIZ				20 * 1024
 # define FLUSH					if (g_m_buf.used >= BUF_SIZ) buf_flush()
 
+# define MAXLINKS				l_ent_max[0]
+# define MAXUSR					l_ent_max[1]
+# define MAXGRP					l_ent_max[2]
+# define MAXSIZE				l_ent_max[3]
+# define MAXMAJOR				l_ent_max[4]
+# define MAXMINOR				l_ent_max[5]
+
 # define NEEDSTAT				(g_flags['R'] || g_flags['t'] || g_flags['l'])
 # define NEEDCAT				NEEDSTAT
+# define NEEDMAJMIN(dev)		S_ISBLK(dev) || S_ISCHR(dev)
 # define INC_POINT_ENT			(g_flags['a'])
 
 typedef unsigned long			t_opts;
@@ -52,17 +63,21 @@ typedef struct					s_ent
 }								t_ent;
 typedef struct					s_fmt_l
 {
-	char						links[3 * sizeof(int) + 2];
+	char						links[STR_SIZE(unsigned int)];
 	char						usr[USR_GRP_MAX_LEN + 1];
 	char						grp[USR_GRP_MAX_LEN + 1];
-	char						size[3 * sizeof(int) + 2];
+	char						size[STR_SIZE(unsigned int)];
+	char						major[STR_SIZE(unsigned int)];
+	char						minor[STR_SIZE(unsigned int)];
+	char						lnk[PATH_MAX];
 }								t_fmt_l;
 
-static const char				*g_usage = "usage: ls [-lRart] [file ...]";
 static const char				*g_access_warn = "ls: cannot access '%s': %s\n";
-static const char				*g_open_warn = "ls: cannot open '%s': %s\n";
-static const char				*g_malloc_err = "malloc: failed to allocate %lu bytes";
 static const char				*g_impl_flags = "Rlart";
+static const char				*g_malloc_err = "malloc: failed to allocate %lu bytes";
+static const char				*g_open_warn = "ls: cannot open '%s': %s\n";
+static const char				*g_read_warn = "ls: cannot read '%s': %s\n";
+static const char				*g_usage = "usage: ls [-lRart] [file ...]";
 char							g_flags[127];
 t_vect							g_m_buf;
 
@@ -73,6 +88,7 @@ void							fmt_l(t_ent **ents, size_t n);
 void							fn_concat(char *bn, t_cat *cat);
 void							ft_ls(char *fn);
 void							ls_exit(const char *format, ...);
+void							readlink_s(char *fn, char *buf, size_t bufsize);
 void							sort_quicksort(void **t, size_t n, int (*cmp)(void *, void *));
 
 #endif
