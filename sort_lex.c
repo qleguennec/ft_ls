@@ -6,13 +6,19 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 23:23:01 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/05 01:21:54 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/06 18:15:45 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ls.h"
 #include "libft/libft.h"
 
 int			sort_lex(void *a, void *b)
 {
-	return (ft_strcmp((const char *)a, (const char *)b));
+	t_ent	*e_a;
+	t_ent	*e_b;
+
+	e_a = (t_ent *)a;
+	e_b = (t_ent *)b;
+	return (ft_strcmp((const char *)e_a->name, (const char *)e_b->name));
 }

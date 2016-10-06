@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 19:12:28 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/05 01:25:24 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/06 20:54:22 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,104 +22,114 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-static size_t	get_n_ents(char *fn)
+static size_t	get_n_ents(char *dn)
 {
 	DIR			*dir;
-	size_t		n_ents;
+	size_t		n;
 	t_dirent	*ent;
 
-	dir = opendir(fn);
+	dir = opendir(dn);
 	if (!dir)
 	{
-		WARN(g_open_warn, fn);
+		WARN(g_open_warn, dn);
 		return (0);
 	}
-	n_ents = 0;
+	n = 0;
 	while ((ent = readdir(dir)))
-		n_ents += ent->d_name[0] != '.' || g_flags['a'];
+		n += ent->d_name[0] != '.' || INC_POINT_ENT;
 	closedir(dir);
-	return (n_ents);
+	return (n);
 }
 
 static void		get_dir_contents
-	(char *fn, char **dir_ents, size_t n_ents)
+	(char *dn, t_ent **ents, size_t n, size_t *maxlen)
 {
 	DIR			*dir;
-	char		*s;
-	size_t		d_len;
 	size_t		i;
 	t_dirent	*ent;
 
 	i = 0;
-	if (!(dir = opendir(fn)))
-		return (WARN(g_open_warn, fn));
-	while (i < n_ents)
+	if (!(dir = opendir(dn)))
+		return (WARN(g_open_warn, dn));
+	while (i < n)
 	{
 		ent = readdir(dir);
-		if (ent->d_name[0] == '.' && !g_flags['a'])
+		if (ent->d_name[0] == '.' && !INC_POINT_ENT)
 			continue ;
-		d_len = ft_strlen(ent->d_name);
-		MALLOC_HANDLE(s, d_len + 1);
-		ft_memcpy(s, ent->d_name, d_len);
-		s[d_len] = '\0';
-		dir_ents[i++] = s;
+		MALLOC_SIZEOF(ents[i]);
+		IMAX(*maxlen, ft_strlen(ent->d_name));
+		if (!(ents[i]->name = ft_strdup(ent->d_name)))
+			MALLOC_ERR(ft_strlen(ent->d_name));
+		i++;
 	}
 	closedir(dir);
 }
 
-static int		fmt(char **dir_ents, size_t n_ents)
+static void		retrieve_data
+	(char *dn, t_ent **ents, size_t n, t_cat *cat)
 {
 	size_t		i;
 
-	i = 0;
-	while (i < n_ents)
-		vect_fmt(&g_m_buf, "%s\n", dir_ents[i++]);
-	return (1);
-}
-
-static void		re_ls(char *dir_ent, char *bn)
-{
-	t_vect		v;
-	t_stat		st;
-
-	if (dir_ent[0] == '.')
-		return ;
-	ft_bzero(&v, sizeof(v));
-	vect_addstr(&v, bn);
-	if (bn[v.used - 1] != '/')
-		vect_addstr(&v, "/");
-	vect_addstr(&v, dir_ent);
-	vect_mset_end(&v, '\0', 1);
-	if (lstat(v.data, &st) == -1)
-		WARN(g_access_warn, v.data);
-	else if (st.st_mode & S_IFDIR && !(st.st_mode & S_IFLNK))
+	if (NEEDCAT)
+		fn_concat(dn, cat);
+	if (NEEDSTAT)
 	{
-		vect_fmt(&g_m_buf, "\n%s:\n", v.data);
-		ft_ls(v.data);
+		i = -1;
+		while (++i < n)
+		{
+			ft_strcpy(cat->p, ents[i]->name);
+			if (lstat(cat->name, &ents[i]->st) == -1)
+				WARN(g_access_warn, cat->name);
+		}
 	}
-	if (g_m_buf.used >= BUFSIZ)
-		g_m_buf_flush();
-	free(dir_ent);
-	free(v.data);
 }
 
-void			ft_ls(char *fn)
+static void		re_ls(t_ent **ents, size_t n, t_cat *cat)
 {
-	char		**dir_ents;
 	size_t		i;
-	size_t		n_ents;
 
-	if (!(n_ents = get_n_ents(fn)))
-		return ;
-	MALLOC_HANDLE(dir_ents, sizeof(char *) * n_ents);
-	get_dir_contents(fn, dir_ents, n_ents);
-	sort_quicksort((void **)dir_ents, n_ents, &sort_lex);
-	i = 0;
-	if (fmt(dir_ents, n_ents) && g_flags['R'])
+	i = -1;
+	while (++i < n)
 	{
-		i = 0;
-		while (i < n_ents)
-			re_ls(dir_ents[i++], fn);
-		free(dir_ents);
+		if ((!(INC_POINT_ENT && (!ft_strcmp(ents[i]->name, ".")
+			|| !ft_strcmp(ents[i]->name, ".."))))
+			&& (S_ISDIR(ents[i]->st.st_mode)))
+		{
+			ft_strcpy(cat->p, ents[i]->name);
+			vect_fmt(&g_m_buf, "\n%s:\n", cat->name);
+			ft_ls(cat->name);
+			if (g_m_buf.used >= BUFSIZ)
+				buf_flush();
+		}
+		free(ents[i]->name);
+		free(ents[i]);
 	}
+}
+
+void			ft_ls(char *dn)
+{
+	size_t		i;
+	size_t		n;
+	t_cat		cat;
+	t_ent		**ents;
+
+	if (!(n = get_n_ents(dn)))
+		return ;
+	MALLOC(ents, sizeof(*ents) * n);
+	cat.maxlen = 0;
+	get_dir_contents(dn, ents, n, &cat.maxlen);
+	retrieve_data(dn, ents, n, &cat);
+	sort_quicksort((void **)ents, n, &sort_lex);
+	if (g_flags['l'])
+		fmt_l(ents, n);
+	else if ((i = -1))
+	{
+		while (++i < n)
+			vect_fmt(&g_m_buf, "%s%c", ents[i]->name, i + 1 == n ? '\n' : ' ');
+	}
+	if (g_flags['R'])
+		re_ls(ents, n, &cat);
+	if (NEEDCAT)
+		free(cat.name);
+	free(ents);
 }

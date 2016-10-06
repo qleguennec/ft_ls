@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:32:06 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/05 01:27:58 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/06 17:32:05 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static void				get_flags(char *arg)
 	i = 0;
 	while (*arg)
 	{
-		while (i < LEN(g_impl_flags) && *arg != g_impl_flags[i])
+		while (i <= LEN(g_impl_flags) && *arg != g_impl_flags[i])
 			i++;
 		if (i == LEN(g_impl_flags))
 			ls_exit("illegal option -- %c\n%s", *arg, g_usage);
@@ -36,8 +36,7 @@ static void				get_flags(char *arg)
 	}
 }
 
-static void				ls_mask
-	(char **argv, size_t argsize)
+static void				ls_mask(char **argv, size_t argsize)
 {
 	int			ret;
 	size_t		i;
@@ -59,7 +58,7 @@ static void				ls_mask
 		else
 			vect_fmt(&g_m_buf, "%s\n", argv[i]);
 		if (g_m_buf.used >= BUFSIZ)
-			g_m_buf_flush();
+			buf_flush();
 		i++;
 	}
 }
@@ -75,8 +74,10 @@ int						main(int argc, char **argv)
 		get_flags(&argv[i++][1]);
 	if (i == argc)
 	{
+		if (g_flags['R'])
+			vect_fmt(&g_m_buf, ".:\n");
 		ft_ls(".");
-		g_m_buf_flush();
+		buf_flush();
 		return (0);
 	}
 	argv += i;
@@ -84,6 +85,6 @@ int						main(int argc, char **argv)
 	i = 0;
 	sort_quicksort((void **)argv, (size_t)argc, &sort_lex);
 	ls_mask(argv, (size_t)argc);
-	g_m_buf_flush();
+	buf_flush();
 	return (0);
 }

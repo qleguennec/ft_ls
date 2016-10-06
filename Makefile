@@ -19,12 +19,13 @@ CYAN		=	"\033[0;36m"
 WHITE		=	"\033[0;37m"
 END			=	"\033[0m"
 
+SRC += fmt_l.c
 SRC += ft_ls.c
 SRC += ls_exit.c
 SRC += main.c
-SRC += g_m_buf_flush.c
 SRC += sort_lex.c
 SRC += sort_quicksort.c
+SRC += util.c
 
 LIB += libprintf.a
 LIB += libvect.a
