@@ -20,6 +20,7 @@ WHITE		=	"\033[0;37m"
 END			=	"\033[0m"
 
 SRC += fmt_l.c
+SRC += fmt.c
 SRC += ft_ls.c
 SRC += ls_exit.c
 SRC += main.c

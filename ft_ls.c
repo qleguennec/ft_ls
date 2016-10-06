@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 19:12:28 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/06 20:54:22 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/06 22:52:38 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,8 +98,7 @@ static void		re_ls(t_ent **ents, size_t n, t_cat *cat)
 			ft_strcpy(cat->p, ents[i]->name);
 			vect_fmt(&g_m_buf, "\n%s:\n", cat->name);
 			ft_ls(cat->name);
-			if (g_m_buf.used >= BUFSIZ)
-				buf_flush();
+			FLUSH;
 		}
 		free(ents[i]->name);
 		free(ents[i]);
@@ -108,7 +107,6 @@ static void		re_ls(t_ent **ents, size_t n, t_cat *cat)
 
 void			ft_ls(char *dn)
 {
-	size_t		i;
 	size_t		n;
 	t_cat		cat;
 	t_ent		**ents;
@@ -122,11 +120,8 @@ void			ft_ls(char *dn)
 	sort_quicksort((void **)ents, n, &sort_lex);
 	if (g_flags['l'])
 		fmt_l(ents, n);
-	else if ((i = -1))
-	{
-		while (++i < n)
-			vect_fmt(&g_m_buf, "%s%c", ents[i]->name, i + 1 == n ? '\n' : ' ');
-	}
+	else
+		fmt(ents, n);
 	if (g_flags['R'])
 		re_ls(ents, n, &cat);
 	if (NEEDCAT)
