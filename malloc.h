@@ -1,26 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ls_exit.c                                          :+:      :+:    :+:   */
+/*   malloc.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/10/03 14:57:38 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 20:15:04 by qle-guen         ###   ########.fr       */
+/*   Created: 2016/10/07 17:54:13 by qle-guen          #+#    #+#             */
+/*   Updated: 2016/10/07 21:00:13 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libprintf/libprintf.h"
-#include <stdlib.h>
-#include <stdarg.h>
+#ifndef MALLOC_H
+# define MALLOC_H
 
-void		ls_exit(const char *format, ...)
-{
-	va_list	ap;
+# include <stdlib.h>
 
-	va_start(ap, format);
-	ft_dprintf(2, "ls: ");
-	ft_vdprintf(2, format, ap);
-	ft_dprintf(2, "\n");
-	exit(1);
-}
+# define MALLOC_F			malloc
+# define MALLOC_ERR(x)		ft_malloc_err(x, __FUNCTION__, __FILE__, __LINE__)
+
+# define MALLOC(p, x)		if (!(p = MALLOC_F(x))) MALLOC_ERR(x)
+# define MALLOC_SIZEOF(p)	MALLOC(p, sizeof(*p))
+
+void						*ft_null(size_t size);
+void						ft_malloc_err
+	(size_t size, const char *func, const char *file, int line);
+
+#endif

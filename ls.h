@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:27:00 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 04:56:29 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/07 20:12:59 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,6 @@
 
 # define USR_GRP_MAX_LEN		32
 # define SIXMONTHS				((365 / 2) * 86400)
-# define VECT_EXIT_FUNCTION		ls_exit("malloc error")
-# define MALLOC_ERR(x)			ls_exit(g_malloc_err, x)
-# define MALLOC(p, x)			if (!(p = malloc(x))) MALLOC_ERR(x)
-# define MALLOC_SIZEOF(p)		MALLOC(p, sizeof(*p))
 # define STR_SIZE(t)			3 * sizeof(t) + 1
 # define WARN(w, x)				(void)ft_dprintf(2, w, x, strerror(errno))
 # define CMP(cmp, a, b)			((g_flags['r']) ? cmp(b, a) : cmp(a, b))
@@ -71,10 +67,8 @@ typedef struct					s_fmt_l
 	char						minor[STR_SIZE(unsigned int)];
 	char						*lnk;
 }								t_fmt_l;
-
-static const char				*g_access_warn = "ls: cannot access '%s': %s\n";
+static const char				*g_access_warn ="ls: cannot access '%s': %s\n";
 static const char				*g_impl_flags = "Rlart";
-static const char				*g_malloc_err = "malloc: failed to allocate %lu bytes";
 static const char				*g_open_warn = "ls: cannot open '%s': %s\n";
 static const char				*g_read_warn = "ls: cannot read '%s': %s\n";
 static const char				*g_usage = "usage: ls [-lRart] [file ...]";

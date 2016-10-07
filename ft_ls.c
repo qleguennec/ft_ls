@@ -6,11 +6,12 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 19:12:28 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 04:56:07 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/07 20:46:13 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ls.h"
+#include "malloc.h"
 #include "libprintf/libprintf.h"
 #include "libvect/libvect.h"
 #include "libft/libft.h"
@@ -19,6 +20,7 @@
 #include <dirent.h>
 #include <errno.h>
 #include <stdio.h>
+#include <limits.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 

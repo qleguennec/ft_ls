@@ -6,11 +6,12 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/05 16:28:04 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 03:46:28 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/07 20:59:25 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ls.h"
+#include "malloc.h"
 #include "libft/libft.h"
 #include "libprintf/libprintf.h"
 #include <errno.h>
@@ -75,6 +76,8 @@ static void		fmt_l_ent_max(t_ent *ent, t_fmt_l *l_ent, size_t *l_ent_max)
 	day[0] = time[8];
 	day[1] = time[9] == ' ' ? '\0' : time[9];
 	last_time_field(last, time, &ent->st.st_mtim.tv_sec);
+#undef MALLOC_F
+#define MALLOC_F ft_null
 	vect_fmt(&g_m_buf, "%c%c%c%c%c%c%c%c%c%c %*s %-*s %-*s"
 		, entry_type(ent->st.st_mode)
 		, MODE(S_IRUSR, 'r'), MODE(S_IWUSR, 'w'), MODE(S_IXUSR, 'x')
@@ -93,8 +96,9 @@ static void		fmt_l_ent_max(t_ent *ent, t_fmt_l *l_ent, size_t *l_ent_max)
 }
 
 static void		handle_max_values
-	(t_ent *ent, t_fmt_l *l_ent, size_t *l_ent_max)
+	(t_ent *ent, t_fmt_l *l_ent, size_t *l_ent_max, size_t *total)
 {
+	*total += ent->st.st_size;
 	IMAX_LEN(MAXLINKS, l_ent->links);
 	IMAX_LEN(MAXUSR, l_ent->usr);
 	IMAX_LEN(MAXGRP, l_ent->grp);
@@ -119,11 +123,11 @@ void			fmt_l(t_ent **ents, size_t n, t_cat *cat)
 	i = -1;
 	while (++i < n)
 	{
-		total += ents[i]->st.st_size;
 		get_l_ent(ents[i], l_ents + i, cat);
-		handle_max_values(ents[i], l_ents + i, l_ent_max);
+		handle_max_values(ents[i], l_ents + i, l_ent_max, &total);
 	}
-	vect_fmt(&g_m_buf, "total %lu\n", total / 512);
+	if (cat)
+		vect_fmt(&g_m_buf, "total %lu\n", total / 512);
 	i = -1;
 	while (++i < n)
 	{

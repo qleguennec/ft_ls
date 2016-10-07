@@ -6,11 +6,12 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:32:06 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 05:54:17 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/07 20:25:30 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ls.h"
+#include "malloc.h"
 #include "libft/libft.h"
 #include "libprintf/libprintf.h"
 #include "libvect/libvect.h"
@@ -56,17 +57,20 @@ static void				ls_count(char **argv, size_t *ndirs, size_t *nfiles)
 }
 
 static void				ls_print
-	(char **dirs, size_t ndirs, char **files, size_t nfiles)
+	(char **dirs, size_t ndirs, t_ent **files, size_t nfiles)
 {
 	size_t	i;
 
-	i = -1;
-	while (++i < nfiles)
-		vect_fmt(&g_m_buf, "%s%c", files[i], i + 1 == nfiles ? '\n' : ' ');
+	if (g_flags['l'])
+		fmt_l(files, nfiles, NULL);
+	else
+		fmt(files, nfiles);
 	i = -1;
 	while (++i < ndirs)
 	{
-		if (nfiles + ndirs > 1 || g_flags['R'])
+		if ((nfiles + ndirs > 1 || g_flags['R']) && !i && !nfiles)
+			vect_fmt(&g_m_buf, "%s:\n", dirs[i]);
+		else if (nfiles + ndirs > 1 || g_flags['R'])
 			vect_fmt(&g_m_buf, "\n%s:\n", dirs[i]);
 		ft_ls(dirs[i]);
 		FLUSH;
@@ -80,28 +84,28 @@ static void				ls_print
 static void				ls_start(char **argv)
 {
 	char	**dirs;
-	char	**files;
 	size_t	ndirs;
 	size_t	nfiles;
+	t_ent	**files;
 	t_stat	st;
 
-	ls_count(argv, &ndirs, &nfiles);
-	if (ndirs)
-		MALLOC(dirs, sizeof(*dirs) * ndirs);
-	if (nfiles)
-		MALLOC(files, sizeof(*files) * nfiles);
+	ls_count(argv--, &ndirs, &nfiles);
 	if (!(ndirs || nfiles))
 		return ;
-	while (*argv)
+	MALLOC(dirs, sizeof(*dirs) * ndirs);
+	MALLOC(files, sizeof(*files) * nfiles);
+	while (*++argv)
 	{
-		if (stat(*argv, &st) != -1)
+		if (stat(*argv, &st) == -1)
+			continue ;
+		if (S_ISDIR(st.st_mode))
+			*dirs++ = *argv;
+		else
 		{
-			if (S_ISDIR(st.st_mode))
-				*dirs++ = *argv;
-			else
-				*files++ = *argv;
+			MALLOC_SIZEOF(*files);
+			(*files)->name = *argv;
+			ft_memcpy(&(*files++)->st, &st, sizeof(st));
 		}
-		argv++;
 	}
 	ls_print(dirs - ndirs, ndirs, files - nfiles, nfiles);
 }
