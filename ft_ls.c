@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 19:12:28 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 03:00:48 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/07 04:56:07 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,8 +100,6 @@ static void		re_ls(t_ent **ents, size_t n, t_cat *cat)
 			ft_ls(cat->name);
 			FLUSH;
 		}
-		free(ents[i]->name);
-		free(ents[i]);
 	}
 }
 
@@ -126,5 +124,5 @@ void			ft_ls(char *dn)
 		re_ls(ents, n, &cat);
 	if (NEEDCAT)
 		free(cat.name);
-	free(ents);
+	free_ents(ents, n);
 }

@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:27:00 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 03:17:39 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/07 04:56:29 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ void							buf_flush(void);
 void							fmt(t_ent **ents, size_t n);
 void							fmt_l(t_ent **ents, size_t n, t_cat *cat);
 void							fn_concat(char *bn, t_cat *cat);
+void							free_ents(t_ent **ents, size_t n);
 void							ft_ls(char *fn);
 void							ls_exit(const char *format, ...);
 void							sort_quicksort(void **t, size_t n, int (*cmp)(void *, void *));
