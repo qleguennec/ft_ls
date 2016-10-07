@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:32:06 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/06 22:43:27 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/07 02:44:39 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,9 @@ static void				ls_mask(char **argv, size_t argsize)
 	{
 		if ((ret = stat(argv[i], &st)) == -1)
 			WARN(g_access_warn, argv[i]);
-		if (st.st_mode & S_IFDIR)
+		else if (!(S_ISDIR(st.st_mode)))
+			vect_fmt(&g_m_buf, "%s\n", argv[i]);
+		else
 		{
 			if (g_flags['R'])
 				vect_fmt(&g_m_buf, "%s:\n", argv[i]);
@@ -55,8 +57,6 @@ static void				ls_mask(char **argv, size_t argsize)
 				vect_fmt(&g_m_buf, "%s:\n", argv[i]);
 			ft_ls(argv[i]);
 		}
-		else
-			vect_fmt(&g_m_buf, "%s\n", argv[i]);
 		if (g_m_buf.used >= BUFSIZ)
 			buf_flush();
 		i++;

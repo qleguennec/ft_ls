@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 19:12:28 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 01:10:06 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/07 03:00:48 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,9 +117,9 @@ void			ft_ls(char *dn)
 	cat.maxlen = 0;
 	get_dir_contents(dn, ents, n, &cat.maxlen);
 	retrieve_data(dn, ents, n, &cat);
-	sort_quicksort((void **)ents, n, &sort_lex);
+	sort_quicksort((void **)ents, n, &sort_ent_lex);
 	if (g_flags['l'])
-		fmt_l(ents, n);
+		fmt_l(ents, n, &cat);
 	else
 		fmt(ents, n);
 	if (g_flags['R'])

@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/05 16:28:04 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 01:36:10 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/07 03:19:34 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,27 +22,7 @@
 #include <sys/types.h>
 #include <linux/kdev_t.h>
 
-static char		entry_type(mode_t m)
-{
-
-	if (S_ISSOCK(m))
-		return ('s');
-	if (S_ISLNK(m))
-		return ('l');
-	if (S_ISREG(m))
-		return ('-');
-	if (S_ISBLK(m))
-		return ('b');
-	if (S_ISDIR(m))
-		return ('d');
-	if (S_ISCHR(m))
-		return ('c');
-	if (S_ISFIFO(m))
-		return ('p');
-	return ('?');
-}
-
-static void		get_l_ent(t_ent *ent, t_fmt_l *l_ent)
+static void		get_l_ent(t_ent *ent, t_fmt_l *l_ent, t_cat *cat)
 {
 	struct passwd	*user;
 	struct group	*group;
@@ -66,7 +46,7 @@ static void		get_l_ent(t_ent *ent, t_fmt_l *l_ent)
 	else
 		ft_sprintf(l_ent->size, "%u", ent->st.st_size);
 	if (S_ISLNK(ent->st.st_mode))
-		readlink_s(ent->name, l_ent->lnk, sizeof(l_ent->lnk));
+		l_ent->lnk = readlink_s(ent, cat);
 }
 
 static void		last_time_field(char *s, char *t, time_t *ftime)
@@ -112,31 +92,45 @@ static void		fmt_l_ent_max(t_ent *ent, t_fmt_l *l_ent, size_t *l_ent_max)
 		? " -> %s\n" : "\n", l_ent->lnk);
 }
 
-void			fmt_l(t_ent **ents, size_t n)
+static void		handle_max_values
+	(t_ent *ent, t_fmt_l *l_ent, size_t *l_ent_max)
+{
+	IMAX_LEN(MAXLINKS, l_ent->links);
+	IMAX_LEN(MAXUSR, l_ent->usr);
+	IMAX_LEN(MAXGRP, l_ent->grp);
+	IMAX_LEN(MAXSIZE, l_ent->size);
+	if (NEEDMAJMIN(ent->st.st_mode))
+	{
+		IMAX_LEN(MAXMAJOR, l_ent->major);
+		IMAX_LEN(MAXMINOR, l_ent->minor);
+	}
+}
+
+void			fmt_l(t_ent **ents, size_t n, t_cat *cat)
 {
 	size_t		i;
 	size_t		l_ent_max[6];
-	t_fmt_l		l_ents[n];
+	size_t		total;
+	t_fmt_l		*l_ents;
 
-	i = -1;
+	MALLOC(l_ents, sizeof(*l_ents) * n);
 	ft_bzero(&l_ent_max, sizeof(l_ent_max));
+	total = 0;
+	i = -1;
 	while (++i < n)
 	{
-		get_l_ent(ents[i], l_ents + i);
-		IMAX_LEN(MAXLINKS, l_ents[i].links);
-		IMAX_LEN(MAXUSR, l_ents[i].usr);
-		IMAX_LEN(MAXGRP, l_ents[i].grp);
-		IMAX_LEN(MAXSIZE, l_ents[i].size);
-		if (NEEDMAJMIN(ents[i]->st.st_mode))
-		{
-			IMAX_LEN(MAXMAJOR, l_ents[i].major);
-			IMAX_LEN(MAXMINOR, l_ents[i].minor);
-		}
+		total += ents[i]->st.st_size;
+		get_l_ent(ents[i], l_ents + i, cat);
+		handle_max_values(ents[i], l_ents + i, l_ent_max);
 	}
+	vect_fmt(&g_m_buf, "total %lu\n", total / 512);
 	i = -1;
 	while (++i < n)
 	{
 		fmt_l_ent_max(ents[i], l_ents + i, l_ent_max);
+		if (S_ISLNK(ents[i]->st.st_mode))
+			free(l_ents[i].lnk);
 		FLUSH;
 	}
+	free(l_ents);
 }

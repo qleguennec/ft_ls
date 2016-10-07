@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:27:00 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 01:15:25 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/07 03:17:39 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ typedef struct					s_fmt_l
 	char						size[STR_SIZE(unsigned int)];
 	char						major[STR_SIZE(unsigned int)];
 	char						minor[STR_SIZE(unsigned int)];
-	char						lnk[PATH_MAX];
+	char						*lnk;
 }								t_fmt_l;
 
 static const char				*g_access_warn = "ls: cannot access '%s': %s\n";
@@ -81,14 +81,16 @@ static const char				*g_usage = "usage: ls [-lRart] [file ...]";
 char							g_flags[127];
 t_vect							g_m_buf;
 
+char							*readlink_s(t_ent *ent, t_cat *cat);
+char							entry_type(mode_t m);
+int								sort_ent_lex(void *a, void *b);
 int								sort_lex(void *a, void *b);
 void							buf_flush(void);
 void							fmt(t_ent **ents, size_t n);
-void							fmt_l(t_ent **ents, size_t n);
+void							fmt_l(t_ent **ents, size_t n, t_cat *cat);
 void							fn_concat(char *bn, t_cat *cat);
 void							ft_ls(char *fn);
 void							ls_exit(const char *format, ...);
-void							readlink_s(char *fn, char *buf, size_t bufsize);
 void							sort_quicksort(void **t, size_t n, int (*cmp)(void *, void *));
 
 #endif
