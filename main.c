@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:32:06 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 04:44:49 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/07 05:54:17 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,21 +36,23 @@ static void				get_flags(char *arg)
 	}
 }
 
-static size_t			ls_count(char **argv)
+static void				ls_count(char **argv, size_t *ndirs, size_t *nfiles)
 {
-	size_t	ndirs;
 	t_stat	st;
 
-	ndirs = 0;
+	*ndirs = 0;
+	*nfiles = 0;
 	while (*argv)
 	{
 		if (stat(*argv, &st) == -1)
 			WARN(g_access_warn, *argv);
 		else
-			ndirs += S_ISDIR(st.st_mode);
+		{
+			*ndirs += S_ISDIR(st.st_mode);
+			*nfiles += !S_ISDIR(st.st_mode);
+		}
 		argv++;
 	}
-	return (ndirs);
 }
 
 static void				ls_print
@@ -75,7 +77,7 @@ static void				ls_print
 		free(files);
 }
 
-static void				ls_start(char **argv, int argc)
+static void				ls_start(char **argv)
 {
 	char	**dirs;
 	char	**files;
@@ -83,22 +85,22 @@ static void				ls_start(char **argv, int argc)
 	size_t	nfiles;
 	t_stat	st;
 
-	if ((ndirs = ls_count(argv)))
+	ls_count(argv, &ndirs, &nfiles);
+	if (ndirs)
 		MALLOC(dirs, sizeof(*dirs) * ndirs);
-	if ((nfiles = (size_t)argc - ndirs))
+	if (nfiles)
 		MALLOC(files, sizeof(*files) * nfiles);
+	if (!(ndirs || nfiles))
+		return ;
 	while (*argv)
 	{
-		if (stat(*argv, &st) == -1)
+		if (stat(*argv, &st) != -1)
 		{
-			WARN(g_access_warn, *argv);
-			argv++;
-			continue ;
+			if (S_ISDIR(st.st_mode))
+				*dirs++ = *argv;
+			else
+				*files++ = *argv;
 		}
-		if (S_ISDIR(st.st_mode))
-			*dirs++ = *argv;
-		else
-			*files++ = *argv;
 		argv++;
 	}
 	ls_print(dirs - ndirs, ndirs, files - nfiles, nfiles);
@@ -125,7 +127,7 @@ int						main(int argc, char **argv)
 	argc -= i;
 	i = 0;
 	sort_quicksort((void **)argv, (size_t)argc, &sort_lex);
-	ls_start(argv, argc);
+	ls_start(argv);
 	buf_flush();
 	return (0);
 }
