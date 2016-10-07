@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:32:06 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 02:44:39 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/07 04:44:49 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,31 +36,72 @@ static void				get_flags(char *arg)
 	}
 }
 
-static void				ls_mask(char **argv, size_t argsize)
+static size_t			ls_count(char **argv)
 {
-	int			ret;
-	size_t		i;
-	t_stat		st;
+	size_t	ndirs;
+	t_stat	st;
 
-	i = 0;
-	while (i < argsize)
+	ndirs = 0;
+	while (*argv)
 	{
-		if ((ret = stat(argv[i], &st)) == -1)
-			WARN(g_access_warn, argv[i]);
-		else if (!(S_ISDIR(st.st_mode)))
-			vect_fmt(&g_m_buf, "%s\n", argv[i]);
+		if (stat(*argv, &st) == -1)
+			WARN(g_access_warn, *argv);
 		else
-		{
-			if (g_flags['R'])
-				vect_fmt(&g_m_buf, "%s:\n", argv[i]);
-			else if (argsize > 1)
-				vect_fmt(&g_m_buf, "%s:\n", argv[i]);
-			ft_ls(argv[i]);
-		}
-		if (g_m_buf.used >= BUFSIZ)
-			buf_flush();
-		i++;
+			ndirs += S_ISDIR(st.st_mode);
+		argv++;
 	}
+	return (ndirs);
+}
+
+static void				ls_print
+	(char **dirs, size_t ndirs, char **files, size_t nfiles)
+{
+	size_t	i;
+
+	i = -1;
+	while (++i < nfiles)
+		vect_fmt(&g_m_buf, "%s%c", files[i], i + 1 == nfiles ? '\n' : ' ');
+	i = -1;
+	while (++i < ndirs)
+	{
+		if (nfiles + ndirs > 1 || g_flags['R'])
+			vect_fmt(&g_m_buf, "\n%s:\n", dirs[i]);
+		ft_ls(dirs[i]);
+		FLUSH;
+	}
+	if (ndirs)
+		free(dirs);
+	if (nfiles)
+		free(files);
+}
+
+static void				ls_start(char **argv, int argc)
+{
+	char	**dirs;
+	char	**files;
+	size_t	ndirs;
+	size_t	nfiles;
+	t_stat	st;
+
+	if ((ndirs = ls_count(argv)))
+		MALLOC(dirs, sizeof(*dirs) * ndirs);
+	if ((nfiles = (size_t)argc - ndirs))
+		MALLOC(files, sizeof(*files) * nfiles);
+	while (*argv)
+	{
+		if (stat(*argv, &st) == -1)
+		{
+			WARN(g_access_warn, *argv);
+			argv++;
+			continue ;
+		}
+		if (S_ISDIR(st.st_mode))
+			*dirs++ = *argv;
+		else
+			*files++ = *argv;
+		argv++;
+	}
+	ls_print(dirs - ndirs, ndirs, files - nfiles, nfiles);
 }
 
 int						main(int argc, char **argv)
@@ -84,7 +125,7 @@ int						main(int argc, char **argv)
 	argc -= i;
 	i = 0;
 	sort_quicksort((void **)argv, (size_t)argc, &sort_lex);
-	ls_mask(argv, (size_t)argc);
+	ls_start(argv, argc);
 	buf_flush();
 	return (0);
 }
