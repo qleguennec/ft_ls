@@ -1,44 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sort_quicksort.c                                   :+:      :+:    :+:   */
+/*   entry.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/10/03 23:16:41 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/05 01:44:54 by qle-guen         ###   ########.fr       */
+/*   Created: 2016/10/07 23:17:25 by qle-guen          #+#    #+#             */
+/*   Updated: 2016/10/08 00:34:40 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ls.h"
-#include <stdlib.h>
+#include "malloc.h"
+#include "libft/libft.h"
+#include "libprintf/libprintf.h"
+#include <errno.h>
 
-void				sort_quicksort
-	(void **t, size_t n, int (*cmp)(void *, void *))
+t_ent		*entry(char *fn, t_cat *cat)
 {
-	int		i;
-	int		j;
-	void	*p;
-	void	*tmp;
+	t_ent	*ret;
+	char	*s;
 
-	if (n < 2)
-		return ;
-	p = t[n / 2];
-	i = 0;
-	j = n - 1;
-	while (42)
+	MALLOC_SIZEOF(ret);
+	ret->name = ft_strdup(fn);
+	if (cat)
 	{
-		while (CMP(cmp, p, t[i]) > 0)
-			i++;
-		while (CMP(cmp, t[j], p) > 0)
-			j--;
-		if (i >= j)
-			break ;
-		tmp = t[i];
-		t[i] = t[j];
-		t[j--] = tmp;
-		i++;
+		ft_strcpy(cat->p, fn);
+		s = cat->name;
 	}
-	sort_quicksort(t, i, cmp);
-	sort_quicksort(t + i, n - i, cmp);
+	else
+		s = fn;
+	if (stat(s, &ret->st) == -1)
+		WARN(g_access_warn, ret->name);
+	return (ret);
 }

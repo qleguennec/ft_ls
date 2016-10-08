@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/05 16:28:04 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 20:59:25 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/07 23:24:56 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,6 @@ static void		fmt_l_ent_max(t_ent *ent, t_fmt_l *l_ent, size_t *l_ent_max)
 	day[0] = time[8];
 	day[1] = time[9] == ' ' ? '\0' : time[9];
 	last_time_field(last, time, &ent->st.st_mtim.tv_sec);
-#undef MALLOC_F
-#define MALLOC_F ft_null
 	vect_fmt(&g_m_buf, "%c%c%c%c%c%c%c%c%c%c %*s %-*s %-*s"
 		, entry_type(ent->st.st_mode)
 		, MODE(S_IRUSR, 'r'), MODE(S_IWUSR, 'w'), MODE(S_IXUSR, 'x')

@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:27:00 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 20:12:59 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/07 23:28:52 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,9 @@
 
 # define NEEDSTAT				(g_flags['R'] || g_flags['t'] || g_flags['l'])
 # define NEEDCAT				NEEDSTAT
-# define NEEDMAJMIN(dev)		S_ISBLK(dev) || S_ISCHR(dev)
+# define NEEDMAJMIN(dev)		(S_ISBLK(dev) || S_ISCHR(dev))
+# define REVSORT				(g_flags['r'])
+# define TIMESORT				(g_flags['t'])
 # define INC_POINT_ENT			(g_flags['a'])
 
 typedef unsigned long			t_opts;
@@ -79,6 +81,9 @@ char							*readlink_s(t_ent *ent, t_cat *cat);
 char							entry_type(mode_t m);
 int								sort_ent_lex(void *a, void *b);
 int								sort_lex(void *a, void *b);
+int								sort_mtim(void *a, void *b);
+t_ent							*entry(char *fn, t_cat *cat);
+t_ent							*get_entry(char *fn, t_cat *cat);
 void							buf_flush(void);
 void							fmt(t_ent **ents, size_t n);
 void							fmt_l(t_ent **ents, size_t n, t_cat *cat);

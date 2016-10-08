@@ -1,28 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   malloc.h                                           :+:      :+:    :+:   */
+/*   sort_mtim.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/10/07 17:54:13 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 21:12:43 by qle-guen         ###   ########.fr       */
+/*   Created: 2016/10/07 23:22:44 by qle-guen          #+#    #+#             */
+/*   Updated: 2016/10/07 23:30:58 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MALLOC_H
-# define MALLOC_H
+#include "ls.h"
+#include "libft/libft.h"
 
-# include <stdlib.h>
+int			sort_mtim(void *a, void *b)
+{
+	t_ent	*e_a;
+	t_ent	*e_b;
 
-# define MALLOC_F			malloc
-# define MALLOC_ERR(x)		ft_malloc_err(x, __FUNCTION__, __FILE__, __LINE__)
-
-# define MALLOC(p, x)		if (!(p = MALLOC_F(x))) MALLOC_ERR(x)
-# define MALLOC_SIZEOF(p)	MALLOC(p, sizeof(*p))
-
-void						*ft_null(size_t size);
-void						ft_malloc_err
-	(size_t size, const char *func, const char *file, int line);
-
-#endif
+	e_a = a;
+	e_b = b;
+	if (e_a->st.st_mtim.tv_sec != e_b->st.st_mtim.tv_sec)
+		return (e_b->st.st_mtim.tv_sec - e_a->st.st_mtim.tv_sec);
+	else
+		return (ft_strcmp(e_a->name, e_b->name));
+}

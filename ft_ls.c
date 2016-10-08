@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 19:12:28 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 20:46:13 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/08 02:51:04 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,25 +44,21 @@ static size_t	get_n_ents(char *dn)
 }
 
 static void		get_dir_contents
-	(char *dn, t_ent **ents, size_t n, size_t *maxlen)
+	(char *dn, t_ent **ents, size_t *maxlen)
 {
 	DIR			*dir;
-	size_t		i;
-	t_dirent	*ent;
+	t_dirent	*dir_ent;
 
-	i = 0;
 	if (!(dir = opendir(dn)))
 		return (WARN(g_open_warn, dn));
-	while (i < n)
+	while ((dir_ent = readdir(dir)))
 	{
-		ent = readdir(dir);
-		if (ent->d_name[0] == '.' && !INC_POINT_ENT)
+		if (dir_ent->d_name[0] == '.' && !INC_POINT_ENT)
 			continue ;
-		MALLOC_SIZEOF(ents[i]);
-		IMAX(*maxlen, ft_strlen(ent->d_name));
-		if (!(ents[i]->name = ft_strdup(ent->d_name)))
-			MALLOC_ERR(ft_strlen(ent->d_name));
-		i++;
+		MALLOC_SIZEOF(*ents);
+		(*ents)->name = ft_strdup(dir_ent->d_name);
+		IMAX(*maxlen, ft_strlen(dir_ent->d_name));
+		ents++;
 	}
 	closedir(dir);
 }
@@ -114,10 +110,12 @@ void			ft_ls(char *dn)
 	if (!(n = get_n_ents(dn)))
 		return ;
 	MALLOC(ents, sizeof(*ents) * n);
-	cat.maxlen = 0;
-	get_dir_contents(dn, ents, n, &cat.maxlen);
+	get_dir_contents(dn, ents, &cat.maxlen);
 	retrieve_data(dn, ents, n, &cat);
-	sort_quicksort((void **)ents, n, &sort_ent_lex);
+	if (TIMESORT)
+		ft_qsort((void **)ents, n, &sort_mtim, REVSORT);
+	else
+		ft_qsort((void **)ents, n, &sort_ent_lex, REVSORT);
 	if (g_flags['l'])
 		fmt_l(ents, n, &cat);
 	else
