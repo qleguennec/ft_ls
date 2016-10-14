@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/07 23:17:25 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/08 00:34:40 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/08 04:06:35 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ t_ent		*entry(char *fn, t_cat *cat)
 	}
 	else
 		s = fn;
-	if (stat(s, &ret->st) == -1)
+	if (stat(s, &ret->st) == -1 && (g_ret = 2))
 		WARN(g_access_warn, ret->name);
 	return (ret);
 }

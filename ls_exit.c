@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:57:38 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/07 20:15:04 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/08 04:10:15 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-void		ls_exit(const char *format, ...)
+void		ls_exit(int ret, const char *format, ...)
 {
 	va_list	ap;
 
@@ -22,5 +22,5 @@ void		ls_exit(const char *format, ...)
 	ft_dprintf(2, "ls: ");
 	ft_vdprintf(2, format, ap);
 	ft_dprintf(2, "\n");
-	exit(1);
+	exit(ret);
 }

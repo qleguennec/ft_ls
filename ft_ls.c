@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 19:12:28 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/08 02:51:04 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/08 05:42:27 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ static size_t	get_n_ents(char *dn)
 	if (!dir)
 	{
 		WARN(g_open_warn, dn);
+		g_ret = 2;
 		return (0);
 	}
 	n = 0;
@@ -49,7 +50,7 @@ static void		get_dir_contents
 	DIR			*dir;
 	t_dirent	*dir_ent;
 
-	if (!(dir = opendir(dn)))
+	if (!(dir = opendir(dn)) && (g_ret = 2))
 		return (WARN(g_open_warn, dn));
 	while ((dir_ent = readdir(dir)))
 	{
@@ -76,7 +77,7 @@ static void		retrieve_data
 		while (++i < n)
 		{
 			ft_strcpy(cat->p, ents[i]->name);
-			if (lstat(cat->name, &ents[i]->st) == -1)
+			if (lstat(cat->name, &ents[i]->st) == -1 && (g_ret = 2))
 				WARN(g_access_warn, cat->name);
 		}
 	}
@@ -89,8 +90,8 @@ static void		re_ls(t_ent **ents, size_t n, t_cat *cat)
 	i = -1;
 	while (++i < n)
 	{
-		if ((!(INC_POINT_ENT && (!ft_strcmp(ents[i]->name, ".")
-			|| !ft_strcmp(ents[i]->name, ".."))))
+		if ((!(INC_POINT_ENT && (!STRCMP(ents[i]->name, ".")
+			|| !STRCMP(ents[i]->name, ".."))))
 			&& (S_ISDIR(ents[i]->st.st_mode)))
 		{
 			ft_strcpy(cat->p, ents[i]->name);
@@ -119,7 +120,7 @@ void			ft_ls(char *dn)
 	if (g_flags['l'])
 		fmt_l(ents, n, &cat);
 	else
-		fmt(ents, n);
+		fmt(ents, n, cat.maxlen);
 	if (g_flags['R'])
 		re_ls(ents, n, &cat);
 	if (NEEDCAT)

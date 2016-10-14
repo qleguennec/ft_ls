@@ -1,20 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sort_lex.c                                         :+:      :+:    :+:   */
+/*   term_getsize.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/10/03 23:23:01 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/08 04:30:46 by qle-guen         ###   ########.fr       */
+/*   Created: 2016/10/08 04:37:14 by qle-guen          #+#    #+#             */
+/*   Updated: 2016/10/08 04:58:10 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ls.h"
-#include "libft/libft.h"
-#include <string.h>
+#include <termios.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <unistd.h>
 
-int			sort_lex(void *a, void *b)
+int			term_getsize(void)
 {
-	return (STRCMP((const char *)a, (const char *)b));
+	int				fd;
+	struct winsize 	s;
+
+	fd = open("/dev/tty", O_RDONLY);
+	ioctl(fd, TIOCGWINSZ, &s);
+	close(fd);
+	return (s.ws_col);
 }

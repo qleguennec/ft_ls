@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/05 16:47:04 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/08 00:29:42 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/10/08 04:09:52 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void		buf_flush(void)
 	if (!g_m_buf.used)
 		return ;
 	if (write(1, g_m_buf.data, g_m_buf.used) == -1)
-		ls_exit("ls: cannot write %lu bytes of data on stdout: %s"
+		ls_exit(2, "ls: cannot write %lu bytes of data on stdout: %s"
 			, g_m_buf.data
 			, strerror(errno));
 	g_m_buf.used = 0;
@@ -55,7 +55,7 @@ char		*readlink_s(t_ent *ent, t_cat *cat)
 	fn = cat->name;
 	MALLOC(ret, ent->st.st_size + 1);
 	n = readlink(fn, ret, ent->st.st_size + 1);
-	if (n == -1)
+	if (n == -1 && (g_ret = 2))
 		WARN(g_read_warn, fn);
 	ret[ent->st.st_size] = '\0';
 	return (ret);
