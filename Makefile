@@ -58,7 +58,7 @@ $(BUILDDIR)/%.o: %.c
 $(NAME): $(OBJECTS) $(LIBRARIES)
 	@printf $(BLUE)$(PROJECT)$(END)'\t'
 	@$(CC) $(CFLAGS) -L$(BUILDDIR) $(LIBLINK) $(OBJECTS) $(LIBLINK) -o $(NAME)
-	@echo "OK\t"$(NAME)
+	@printf "OK\t"$(NAME)'\n'
 
 .PHONY: clean fclean re
 
