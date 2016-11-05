@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 19:12:28 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 15:18:16 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/05 17:21:47 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 #include <stdio.h>
 #include <limits.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <stdio.h>
+#include <sys/stat.h>
 
 static size_t	get_n_ents(char *dn)
 {
@@ -78,7 +78,8 @@ static void		retrieve_data
 		while (++i < n)
 		{
 			ft_strcpy(cat->p, ents[i]->name);
-			if (lstat(cat->name, &ents[i]->st) == -1 && (g_ret = 2))
+			if ((ents[i]->ignore = lstat(cat->name, &ents[i]->st) == -1)
+				&& (g_ret = 2))
 				WARN(g_access_warn, cat->name);
 		}
 	}
@@ -93,7 +94,8 @@ static void		re_ls(t_ent **ents, size_t n, t_cat *cat)
 	{
 		if ((!(INC_POINT_ENT && (!STRCMP(ents[i]->name, ".")
 			|| !STRCMP(ents[i]->name, ".."))))
-			&& (S_ISDIR(ents[i]->st.st_mode)))
+			&& (S_ISDIR(ents[i]->st.st_mode))
+			&& !ents[i]->ignore)
 		{
 			ft_strcpy(cat->p, ents[i]->name);
 			vect_fmt(&g_m_buf, "\n%s:\n", cat->name);

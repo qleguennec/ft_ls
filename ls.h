@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:27:00 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/18 23:16:37 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/05 16:40:16 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # define USR_GRP_MAX_LEN		32
 # define SIXMONTHS				((365 / 2) * 86400)
 # define STR_SIZE(t)			3 * sizeof(t) + 1
-# define WARN(w, x)				(void)ft_dprintf(2, w, x, strerror(errno))
+# define WARN(w, x)				(void)ft_dprintf(2, w, __FUNCTION__, x, strerror(errno))
 # define CMP(cmp, a, b)			((g_flags['r']) ? cmp(b, a) : cmp(a, b))
 # define MODE(c, l)				((ent->st.st_mode & c) ? l : '-')
 # define IMAX(a, b)				(a = a >= b ? a : b)
@@ -39,7 +39,8 @@
 # define MAXMAJOR				l_ent_max[4]
 # define MAXMINOR				l_ent_max[5]
 
-# define NEEDSTAT				(g_flags['R'] || g_flags['t'] || g_flags['l'])
+//# define NEEDSTAT				(g_flags['R'] || g_flags['t'] || g_flags['l'])
+# define NEEDSTAT				1
 # define NEEDCAT				NEEDSTAT
 # define NEEDMAJMIN(dev)		(S_ISBLK(dev) || S_ISCHR(dev))
 # define REVSORT				(g_flags['r'])
@@ -59,6 +60,7 @@ typedef struct					s_ent
 {
 	char						*name;
 	t_stat						st;
+	unsigned int				ignore : 1;
 }								t_ent;
 typedef struct					s_fmt_l
 {
@@ -70,10 +72,10 @@ typedef struct					s_fmt_l
 	char						minor[STR_SIZE(unsigned int)];
 	char						*lnk;
 }								t_fmt_l;
-static const char				*g_access_warn = "ls: cannot access '%s': %s\n";
+static const char				*g_access_warn = "ls: '%s()' cannot access '%s': %s\n";
 static const char				*g_impl_flags = "Rlart";
-static const char				*g_open_warn = "ls: cannot open '%s': %s\n";
-static const char				*g_read_warn = "ls: cannot read '%s': %s\n";
+static const char				*g_open_warn = "ls: '%s()' cannot open '%s': %s\n";
+static const char				*g_read_warn = "ls: '%s()' cannot read '%s': %s\n";
 static const char				*g_usage = "usage: ls [-lRart] [file ...]";
 size_t							g_nfiles;
 size_t							g_ndirs;

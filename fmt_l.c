@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/05 16:28:04 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/03 14:46:53 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/05 16:45:56 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ static void		get_l_ent(t_ent *ent, t_fmt_l *l_ent, t_cat *cat)
 	struct passwd	*user;
 	struct group	*group;
 
+	if (ent->ignore)
+		return ;
 	group = getgrgid(ent->st.st_gid);
 	if ((user = getpwuid(ent->st.st_uid)))
 		ft_strcpy(l_ent->usr, user->pw_name);
@@ -70,6 +72,8 @@ static void		fmt_l_ent_max(t_ent *ent, t_fmt_l *l_ent, size_t *l_ent_max)
 	char		day[3];
 	char		last[5];
 
+	if (ent->ignore)
+		return ;
 	time = ctime(&ent->st.st_mtimespec.tv_sec);
 	ft_memcpy(mon, time + 4, 3);
 	day[0] = time[8];

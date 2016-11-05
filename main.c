@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:32:06 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 15:10:57 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/05 16:44:44 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ static void				ls_count(char **argv)
 	g_nfiles = 0;
 	while (*argv)
 	{
-		if (stat(*argv, &st) == -1 && (g_ret = 2))
-			WARN(g_access_warn, *argv);
+		if (stat(*argv, &st) == -1)
+			g_ret = 2;
 		else
 		{
 			g_ndirs += S_ISDIR(st.st_mode);
