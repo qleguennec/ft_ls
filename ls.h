@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:27:00 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 18:33:36 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/05 19:27:11 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,14 @@
 # define BUF_SIZ				20 * 1024
 # define FLUSH					if (g_m_buf.used >= BUF_SIZ) buf_flush()
 # define STRCMP					ft_strcmp
+# define FMT(...)				vect_fmt(&g_m_buf, __VA_ARGS__)
 
 # define MAXLINKS				l_ent_max[0]
 # define MAXUSR					l_ent_max[1]
 # define MAXGRP					l_ent_max[2]
 # define MAXSIZE				l_ent_max[3]
-# define MAXMAJOR				l_ent_max[4]
-# define MAXMINOR				l_ent_max[5]
+# define MAXMA					l_ent_max[4]
+# define MAXMI					l_ent_max[5]
 
 //# define NEEDSTAT				(g_flags['R'] || g_flags['t'] || g_flags['l'])
 # define NEEDSTAT				1
@@ -73,7 +74,7 @@ typedef struct					s_fmt_l
 	char						*lnk;
 }								t_fmt_l;
 static const char				*g_access_warn = "ls: '%s()' cannot access '%s': %s\n";
-static const char				*g_impl_flags = "Rlartdf";
+static const char				*g_impl_flags = "Rlartdfu";
 static const char				*g_open_warn = "ls: '%s()' cannot open '%s': %s\n";
 static const char				*g_read_warn = "ls: '%s()' cannot read '%s': %s\n";
 static const char				*g_usage = "usage: ls [-lRart] [file ...]";
@@ -88,10 +89,11 @@ char							*readlink_s(t_ent *ent, t_cat *cat);
 char							entry_type(mode_t m);
 int								sort_ent_lex(void *a, void *b);
 int								sort_lex(void *a, void *b);
-int								sort_mtim(void *a, void *b);
+int								sort_time(void *a, void *b);
 int								term_getsize(void);
 t_ent							*entry(char *fn, t_cat *cat);
 t_ent							*get_entry(char *fn, t_cat *cat);
+time_t							entry_gettime(t_ent *ent);
 void							buf_flush(void);
 void							fmt(t_ent **ents, size_t n, size_t maxlen);
 void							fmt_l(t_ent **ents, size_t n, t_cat *cat);

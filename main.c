@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:32:06 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 18:32:51 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/05 18:51:38 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,9 @@ static void				ls_print(t_ent **dirs, t_ent **files, size_t maxlen)
 	while (++i < g_ndirs)
 	{
 		if ((g_nfiles + g_ndirs > 1 || g_flags['R']) && !i && !g_nfiles)
-			vect_fmt(&g_m_buf, "%s:\n", dirs[i]->name);
+			FMT("%s:\n", dirs[i]->name);
 		else if (g_nfiles + g_ndirs > 1 || g_flags['R'])
-			vect_fmt(&g_m_buf, "\n%s:\n", dirs[i]->name);
+			FMT("\n%s:\n", dirs[i]->name);
 		ft_ls(dirs[i]->name);
 		FLUSH;
 	}

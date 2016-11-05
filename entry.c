@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/07 23:17:25 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 17:47:42 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/05 19:33:20 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,4 +32,11 @@ t_ent		*entry(char *fn, t_cat *cat)
 		s = fn;
 	ret->ignore = stat(s, &ret->st) == -1;
 	return (ret);
+}
+
+time_t		entry_gettime(t_ent *ent)
+{
+	if (g_flags['u'])
+		return (ent->st.st_atime);
+	return (ent->st.st_mtime);
 }

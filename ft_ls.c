@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 19:12:28 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 18:33:52 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/05 18:52:04 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ static void		re_ls(t_ent **ents, size_t n, t_cat *cat)
 			&& !ents[i]->ignore)
 		{
 			ft_strcpy(cat->p, ents[i]->name);
-			vect_fmt(&g_m_buf, "\n%s:\n", cat->name);
+			FMT("\n%s:\n", cat->name);
 			ft_ls(cat->name);
 			FLUSH;
 		}
