@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:27:00 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 17:48:52 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/05 18:33:36 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@
 # define NEEDSTAT				1
 # define NEEDCAT				NEEDSTAT
 # define NEEDMAJMIN(dev)		(S_ISBLK(dev) || S_ISCHR(dev))
-# define REVSORT				(g_flags['r'])
-# define TIMESORT				(g_flags['t'])
 # define INC_POINT_ENT			(g_flags['a'])
 
 # define ENT_ISDIR(x)			(!g_flags['d'] && S_ISDIR(x.st_mode))
@@ -75,7 +73,7 @@ typedef struct					s_fmt_l
 	char						*lnk;
 }								t_fmt_l;
 static const char				*g_access_warn = "ls: '%s()' cannot access '%s': %s\n";
-static const char				*g_impl_flags = "Rlartd";
+static const char				*g_impl_flags = "Rlartdf";
 static const char				*g_open_warn = "ls: '%s()' cannot open '%s': %s\n";
 static const char				*g_read_warn = "ls: '%s()' cannot read '%s': %s\n";
 static const char				*g_usage = "usage: ls [-lRart] [file ...]";
@@ -101,6 +99,7 @@ void							fn_concat(char *bn, t_cat *cat);
 void							free_ents(t_ent **ents, size_t n);
 void							ft_ls(char *fn);
 void							ls_exit(int ret, const char *format, ...);
-void							sort_quicksort(void **t, size_t n, int (*cmp)(void *, void *));
+void							ls_sort(char **t, size_t n);
+void							ls_sort_ents(t_ent **t, size_t n);
 
 #endif

@@ -24,6 +24,7 @@ SRC += fmt.c
 SRC += fmt_l.c
 SRC += ft_ls.c
 SRC += ls_exit.c
+SRC += ls_sort.c
 SRC += main.c
 SRC += sort_ent_lex.c
 SRC += sort_lex.c

@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:32:06 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 18:02:08 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/05 18:32:51 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,11 +103,8 @@ static void				ls_start(char **argv)
 			*files++ = ent;
 		}
 	}
-	if (TIMESORT)
-	{
-		ft_qsort((void **)dirs - g_ndirs, g_ndirs, &sort_mtim, REVSORT);
-		ft_qsort((void **)files - g_nfiles, g_nfiles, &sort_mtim, REVSORT);
-	}
+	ls_sort_ents(dirs - g_ndirs, g_ndirs);
+	ls_sort_ents(files - g_ndirs, g_ndirs);
 	ls_print(dirs - g_ndirs, files - g_nfiles, maxlen);
 }
 
@@ -128,8 +125,7 @@ int						main(int argc, char **argv)
 	argv += i;
 	argc -= i;
 	i = 0;
-	if (!TIMESORT && !noarg)
-		ft_qsort((void **)argv, (size_t)argc, &sort_lex, REVSORT);
+	ls_sort(argv, (size_t)argc);
 	ls_count(noarg ? &noarg : argv);
 	ls_start(noarg ? &noarg : argv);
 	buf_flush();
