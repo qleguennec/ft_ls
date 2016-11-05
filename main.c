@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:32:06 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 16:44:44 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/05 18:02:08 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,12 @@ static void				ls_count(char **argv)
 	g_nfiles = 0;
 	while (*argv)
 	{
-		if (stat(*argv, &st) == -1)
-			g_ret = 2;
+		if (stat(*argv, &st) == -1 && (g_ret = 2))
+			WARN(g_access_warn, *argv);
 		else
 		{
-			g_ndirs += S_ISDIR(st.st_mode);
-			g_nfiles += !S_ISDIR(st.st_mode);
+			g_ndirs += ENT_ISDIR(st);
+			g_nfiles += !ENT_ISDIR(st);
 		}
 		argv++;
 	}
@@ -95,7 +95,7 @@ static void				ls_start(char **argv)
 	maxlen = 0;
 	while (*argv)
 	{
-		if ((ent = entry(*argv++, NULL)) && S_ISDIR(ent->st.st_mode))
+		if ((ent = entry(*argv++, NULL)) && ENT_ISDIR(ent->st))
 			*dirs++ = ent;
 		else
 		{
@@ -114,28 +114,25 @@ static void				ls_start(char **argv)
 int						main(int argc, char **argv)
 {
 	int		i;
+	char	*noarg;
 
 	i = 1;
 	ft_bzero(&g_m_buf, sizeof(g_m_buf));
 	ft_bzero(&g_flags, LEN(g_flags));
+	noarg = NULL;
 	g_ret = 0;
 	while (i < argc && argv[i][0] == '-')
 		get_flags(&argv[i++][1]);
 	if (i == argc)
-	{
-		if (g_flags['R'])
-			vect_fmt(&g_m_buf, ".:\n");
-		ft_ls(".");
-		buf_flush();
-		return (0);
-	}
+		noarg = ft_strdup(".");
 	argv += i;
 	argc -= i;
 	i = 0;
-	if (!TIMESORT)
+	if (!TIMESORT && !noarg)
 		ft_qsort((void **)argv, (size_t)argc, &sort_lex, REVSORT);
-	ls_count(argv);
-	ls_start(argv);
+	ls_count(noarg ? &noarg : argv);
+	ls_start(noarg ? &noarg : argv);
 	buf_flush();
+	free(noarg);
 	return (g_ret);
 }

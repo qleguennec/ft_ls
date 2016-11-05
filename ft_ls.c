@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 19:12:28 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 17:21:47 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/05 17:51:52 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ static void		re_ls(t_ent **ents, size_t n, t_cat *cat)
 	{
 		if ((!(INC_POINT_ENT && (!STRCMP(ents[i]->name, ".")
 			|| !STRCMP(ents[i]->name, ".."))))
-			&& (S_ISDIR(ents[i]->st.st_mode))
+			&& (ENT_ISDIR(ents[i]->st))
 			&& !ents[i]->ignore)
 		{
 			ft_strcpy(cat->p, ents[i]->name);
