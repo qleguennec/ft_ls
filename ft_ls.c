@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 19:12:28 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/08 05:42:27 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/05 15:18:16 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include <limits.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <stdio.h>
 
 static size_t	get_n_ents(char *dn)
 {
@@ -111,6 +112,7 @@ void			ft_ls(char *dn)
 	if (!(n = get_n_ents(dn)))
 		return ;
 	MALLOC(ents, sizeof(*ents) * n);
+	cat.maxlen = 0;
 	get_dir_contents(dn, ents, &cat.maxlen);
 	retrieve_data(dn, ents, n, &cat);
 	if (TIMESORT)

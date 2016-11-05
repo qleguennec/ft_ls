@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/05 16:28:04 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/10/21 17:26:44 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/03 14:46:53 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 #include <time.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <linux/kdev_t.h>
 
 static void		get_l_ent(t_ent *ent, t_fmt_l *l_ent, t_cat *cat)
 {
@@ -71,11 +70,11 @@ static void		fmt_l_ent_max(t_ent *ent, t_fmt_l *l_ent, size_t *l_ent_max)
 	char		day[3];
 	char		last[5];
 
-	time = ctime(&ent->st.st_mtim.tv_sec);
+	time = ctime(&ent->st.st_mtimespec.tv_sec);
 	ft_memcpy(mon, time + 4, 3);
 	day[0] = time[8];
 	day[1] = time[9] == ' ' ? '\0' : time[9];
-	last_time_field(last, time, &ent->st.st_mtim.tv_sec);
+	last_time_field(last, time, &ent->st.st_mtimespec.tv_sec);
 	vect_fmt(&g_m_buf, "%c%c%c%c%c%c%c%c%c%c %*s %-*s %-*s"
 		, entry_type(ent->st.st_mode)
 		, MODE(S_IRUSR, 'r'), MODE(S_IWUSR, 'w'), MODE(S_IXUSR, 'x')
