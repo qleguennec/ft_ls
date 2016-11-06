@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:27:00 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 19:27:11 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/06 15:50:22 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # define USR_GRP_MAX_LEN		32
 # define SIXMONTHS				((365 / 2) * 86400)
 # define STR_SIZE(t)			3 * sizeof(t) + 1
-# define WARN(w, x)				(void)ft_dprintf(2, w, __FUNCTION__, x, strerror(errno))
+# define WARN(w, x)				ft_dprintf(2,w,__FUNCTION__,x,strerror(errno))
 # define CMP(cmp, a, b)			((g_flags['r']) ? cmp(b, a) : cmp(a, b))
 # define MODE(c, l)				((ent->st.st_mode & c) ? l : '-')
 # define IMAX(a, b)				(a = a >= b ? a : b)
@@ -40,7 +40,6 @@
 # define MAXMA					l_ent_max[4]
 # define MAXMI					l_ent_max[5]
 
-//# define NEEDSTAT				(g_flags['R'] || g_flags['t'] || g_flags['l'])
 # define NEEDSTAT				1
 # define NEEDCAT				NEEDSTAT
 # define NEEDMAJMIN(dev)		(S_ISBLK(dev) || S_ISCHR(dev))
@@ -73,24 +72,24 @@ typedef struct					s_fmt_l
 	char						minor[STR_SIZE(unsigned int)];
 	char						*lnk;
 }								t_fmt_l;
-static const char				*g_access_warn = "ls: '%s()' cannot access '%s': %s\n";
-static const char				*g_impl_flags = "Rlartdfu";
-static const char				*g_open_warn = "ls: '%s()' cannot open '%s': %s\n";
-static const char				*g_read_warn = "ls: '%s()' cannot read '%s': %s\n";
-static const char				*g_usage = "usage: ls [-lRart] [file ...]";
-size_t							g_nfiles;
-size_t							g_ndirs;
+
+static const char	*g_access_warn = "ls: '%s()'cannot access '%s': %s\n";
+static const char	*g_impl_flags = "Rlartdfuc";
+static const char	*g_open_warn = "ls: '%s()' cannot open '%s': %s\n";
+static const char	*g_read_warn = "ls: '%s()' cannot read '%s': %s\n";
+
 char							g_flags[127];
-t_vect							g_m_buf;
-int								g_ret;
 int								g_ncols;
+int								g_ret;
+size_t							g_ndirs;
+size_t							g_nfiles;
+t_vect							g_m_buf;
 
 char							*readlink_s(t_ent *ent, t_cat *cat);
 char							entry_type(mode_t m);
 int								sort_ent_lex(void *a, void *b);
 int								sort_lex(void *a, void *b);
 int								sort_time(void *a, void *b);
-int								term_getsize(void);
 t_ent							*entry(char *fn, t_cat *cat);
 t_ent							*get_entry(char *fn, t_cat *cat);
 time_t							entry_gettime(t_ent *ent);

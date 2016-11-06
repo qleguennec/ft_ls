@@ -29,7 +29,6 @@ SRC += main.c
 SRC += sort_ent_lex.c
 SRC += sort_lex.c
 SRC += sort_time.c
-SRC += term_getsize.c
 SRC += util.c
 
 LIB += libprintf.a

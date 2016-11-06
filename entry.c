@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/07 23:17:25 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 19:33:20 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/06 15:54:24 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ t_ent		*entry(char *fn, t_cat *cat)
 
 time_t		entry_gettime(t_ent *ent)
 {
+	if (g_flags['c'])
+		return (ent->st.st_ctime);
 	if (g_flags['u'])
 		return (ent->st.st_atime);
 	return (ent->st.st_mtime);

@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/06 22:47:48 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 18:50:58 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/06 15:26:24 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,35 +22,7 @@ void			fmt(t_ent **ents, size_t n, size_t maxlen)
 	while (i < n)
 	{
 		if (!ents[i]->ignore)
-		 	FMT("%s%c", ents[i]->name, i + 1 == n ? '\n' : ' ');
+			FMT("%s%c", ents[i]->name, i + 1 == n ? '\n' : ' ');
 		i++;
 	}
 }
-
-//void			fmt(t_ent **ents, size_t n, size_t maxlen)
-//{
-//	size_t		i;
-//	size_t		total;
-//
-//	i = 0;
-//	total = 0;
-//	while (i < n)
-//	{
-//		vect_fmt(&g_m_buf, "%-*s", i + 1 == n ? 0 : maxlen, ents[i]->name);
-//		total += maxlen;
-//		if (i + 1 == n)
-//			vect_mset_end(&g_m_buf, '\n', 1);
-//		else if (total + maxlen > (size_t)g_ncols)
-//		{
-//			total = 0;
-//			vect_mset_end(&g_m_buf, '\n', 1);
-//		}
-//		else
-//		{
-//			total++;
-//			vect_mset_end(&g_m_buf, ' ', 1);
-//		}
-//		i++;
-//		FLUSH;
-//	}
-//}

@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 19:12:28 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 18:52:04 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/06 15:32:29 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 #include <stdio.h>
 #include <limits.h>
 #include <sys/types.h>
-#include <stdio.h>
 #include <sys/stat.h>
 
 static size_t	get_n_ents(char *dn)
@@ -51,8 +50,12 @@ static void		get_dir_contents
 	DIR			*dir;
 	t_dirent	*dir_ent;
 
-	if (!(dir = opendir(dn)) && (g_ret = 2))
-		return (WARN(g_open_warn, dn));
+	if (!(dir = opendir(dn)))
+	{
+		g_ret = 2;
+		WARN(g_open_warn, dn);
+		return ;
+	}
 	while ((dir_ent = readdir(dir)))
 	{
 		if (dir_ent->d_name[0] == '.' && !INC_POINT_ENT)

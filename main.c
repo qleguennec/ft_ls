@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 14:32:06 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 18:51:38 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/06 15:53:51 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,19 @@
 static void				get_flags(char *arg)
 {
 	size_t		i;
+	size_t		len;
 
+	len = LEN(g_impl_flags);
 	while (*arg)
 	{
 		i = 0;
-		while (i < LEN(g_impl_flags) && *arg != g_impl_flags[i])
+		while (i < len && *arg != g_impl_flags[i])
 			i++;
-		if (i == LEN(g_impl_flags) && *arg != g_impl_flags[i - 1])
-			ls_exit(2, "illegal option -- %c\n%s", *arg, g_usage);
+		if (*arg != g_impl_flags[i])
+		{
+			ft_dprintf(2, "illegal option -- %c\n", *arg);
+			ls_exit(1, "usage: [-%s] [file ...]", g_impl_flags);
+		}
 		g_flags[(int)*arg] = 1;
 		arg++;
 	}
@@ -60,7 +65,6 @@ static void				ls_print(t_ent **dirs, t_ent **files, size_t maxlen)
 {
 	size_t	i;
 
-	g_ncols = term_getsize();
 	if (g_flags['l'])
 		fmt_l(files, g_nfiles, NULL);
 	else
@@ -90,7 +94,7 @@ static void				ls_start(char **argv)
 
 	if (!(g_ndirs || g_nfiles))
 		return ;
-	MALLOC(dirs, sizeof *dirs * g_ndirs);
+	MALLOC(dirs, sizeof(*dirs) * g_ndirs);
 	MALLOC(files, sizeof(*files) * g_nfiles);
 	maxlen = 0;
 	while (*argv)
