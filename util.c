@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/05 16:47:04 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/05 17:48:11 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/06 16:47:38 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ char		*readlink_s(t_ent *ent, t_cat *cat)
 	fn = cat->name;
 	MALLOC(ret, ent->st.st_size + 1);
 	n = readlink(fn, ret, ent->st.st_size + 1);
-	if (n == -1 && (g_ret = 2))
+	if (n == -1 && (g_ret = 1))
 		WARN(g_read_warn, fn);
 	ret[ent->st.st_size] = '\0';
 	return (ret);

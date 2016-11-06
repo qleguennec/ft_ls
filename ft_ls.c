@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/03 19:12:28 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/06 15:32:29 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/11/06 16:47:32 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static size_t	get_n_ents(char *dn)
 	if (!dir)
 	{
 		WARN(g_open_warn, dn);
-		g_ret = 2;
+		g_ret = 1;
 		return (0);
 	}
 	n = 0;
@@ -52,7 +52,7 @@ static void		get_dir_contents
 
 	if (!(dir = opendir(dn)))
 	{
-		g_ret = 2;
+		g_ret = 1;
 		WARN(g_open_warn, dn);
 		return ;
 	}
@@ -82,7 +82,7 @@ static void		retrieve_data
 		{
 			ft_strcpy(cat->p, ents[i]->name);
 			if ((ents[i]->ignore = lstat(cat->name, &ents[i]->st) == -1)
-				&& (g_ret = 2))
+				&& (g_ret = 1))
 				WARN(g_access_warn, cat->name);
 		}
 	}
